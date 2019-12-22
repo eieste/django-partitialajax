@@ -1,0 +1,11 @@
+<div class="ajaxpartitial-container"
+    {% if partitial.specific.selector.id %}id="{{ partitial.specific.selector.id }}"{% endif %}
+    {% if partitial.specific.selector.class_list %}class="{{ partitial.specific.selector.class_list|join:" " }}"{% endif %}
+    {% if partitial.specific.selector.attribute_list %}{% for attrname, attrvalue in partitial.specific.selector.attribute_list.items %}{{ attrname }}="{{ attrvalue }}"{% endfor %}{% endif %}
+    {% if partitial.specific.reload %}data-partitial-reload="{{ partitial.specific.reload }}"{% endif %}
+    {% if partitial.specific.url %}data-partitial-url="{{ partitial.specific.url }}"{% endif %}
+    {% if partitial.specific.selectorstring %}data-partitial-selectorstring="{{ partitial.specific.selectorstring }}"{% endif %}
+    {% if partitial.specific.allowed_elements %}data-partitial-allowed-elements="{{ partitial.specific.allowed_elements }}"{% endif %}
+     >
+    {{ partitial.data }}
+</div>
