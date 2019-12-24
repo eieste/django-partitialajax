@@ -2,6 +2,6 @@
 Javascript
 ==========
 
-.. js:autoclass:: AjaxPartitial
+.. js:autoclass:: AjaxPartitialJs
    :members:
    :private-members:

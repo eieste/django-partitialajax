@@ -76,24 +76,39 @@ class AjaxPartitial{
     registerReloadButton(){
         let self = this;
         $(self.info.elements.reload).on("click", function(){
-            $.getJSON(self.info.parameters.url, function (data) {
-                $.each(data.content, function(selector, template){
-                    if(selector in self.info.parameters.allowed_elements || "all" in self.info.parameters.allowed_elements){
-                        $(selector).html(data.content[selectorstring]);
-                    }else if(selector === self.info.parameters.selectorstring){
-                        $(self.info.elements.self).html(data.content[self.info.parameters.selectorstring]);
-                    }
-                });
-                let options = $.extend({}, defaults.ajax, data.options);
-                console.log(options);
-                if(options.reregister){
-                    self.registerReloadButton();
-                }
-            });
+            self.getPartitital();
+        });
+    };
+
+    /**
+     * Load Partitial Information from Remote Source
+     */
+    getPartitital(){
+        let self = this;
+        $.getJSON(self.info.parameters.url, function (data) {
+            self._implementPartitial(data);
+            self._postPartitialImplementation(data);
         });
     };
 
 
+    _implementPartitial(data){
+        $.each(data.content, function(selector, template){
+            if(selector in self.info.parameters.allowed_elements || "all" in self.info.parameters.allowed_elements){
+                $(selector).html(data.content[selectorstring]);
+            }else if(selector === self.info.parameters.selectorstring){
+                $(self.info.elements.self).html(data.content[self.info.parameters.selectorstring]);
+            }
+        });
+    }
+
+    _postPartitialImplementation(data){
+        let options = $.extend({}, defaults.ajax, data.options);
+
+        if(options.reregister){
+            self.registerReloadButton();
+        }
+    }
 
 }
 
