@@ -1,0 +1,66 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check {{ '/2.0/language-javascript/' | docs_url }} for more details
+#
+version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:8.9.1
+
+
+pypideploy: &pypideploy
+  description: |
+    Publish the PyPI package
+  steps:
+  - run:
+      command: |
+        sudo pip install setuptools wheel twine
+      name: Install dependencies
+  - run:
+      command: |
+        python setup.py verify
+      name: Verify git tag vs. version
+  - run:
+      command: |
+        echo -e "[pypi]" >> ~/.pypirc
+        echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
+        echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+      name: Init .pypirc
+  - run:
+      command: |
+        python3 setup.py sdist bdist_wheel
+      name: Create packages
+  - run:
+      command: |
+        twine upload dist/*
+      name: Upload to pypi
+
+jobs:
+  npmdeploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo/partititalajax/src/
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish
+  pypideploy:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/python:3.7
+    description: |
+      Publish a PyPI package
+    steps:
+      - attach_workspace:
+          at: ~/repo/
+    - run:
+      <<: *pypideploy
+
+
+
+
