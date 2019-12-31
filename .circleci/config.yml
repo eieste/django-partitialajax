@@ -18,7 +18,7 @@ jobs:
           command: ls -lah ~/; echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
       - run:
           name: Publish package
-          command: ls -lah; cd partititalajax/src/; npm publish
+          command: ls -lah; cd partitialajax/src/; npm publish
   pypideploy:
     docker:
       - image: circleci/python:3.7
@@ -28,11 +28,6 @@ jobs:
           command: |
             sudo pip install setuptools wheel twine
           name: Install dependencies
-      - run:
-          command: |
-            ls -lah;
-            python setup.py verify
-          name: Verify git tag vs. version
       - run:
           command: |
             ls -lah ~/
