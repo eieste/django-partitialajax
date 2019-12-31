@@ -9,31 +9,6 @@ defaults: &defaults
   docker:
     - image: circleci/node:8.9.1
 
-
-pypideploy: &pypideploy
-  - run:
-      command: |
-        sudo pip install setuptools wheel twine
-      name: Install dependencies
-  - run:
-      command: |
-        python setup.py verify
-      name: Verify git tag vs. version
-  - run:
-      command: |
-        echo -e "[pypi]" >> ~/.pypirc
-        echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
-        echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
-      name: Init .pypirc
-  - run:
-      command: |
-        python3 setup.py sdist bdist_wheel
-      name: Create packages
-  - run:
-      command: |
-        twine upload dist/*
-      name: Upload to pypi
-
 jobs:
   npmdeploy:
     <<: *defaults
@@ -51,8 +26,28 @@ jobs:
     docker:
       - image: circleci/python:3.7
     steps:
-    <<: *pypideploy
-
+      - run:
+          command: |
+            sudo pip install setuptools wheel twine
+          name: Install dependencies
+      - run:
+          command: |
+            python setup.py verify
+          name: Verify git tag vs. version
+      - run:
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+          name: Init .pypirc
+      - run:
+          command: |
+            python3 setup.py sdist bdist_wheel
+          name: Create packages
+      - run:
+          command: |
+            twine upload dist/*
+          name: Upload to pypi
 workflows:
   version: 2
   publish:
