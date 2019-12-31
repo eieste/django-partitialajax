@@ -35,14 +35,9 @@ settings.configure(
 django.setup()
 
 
-
-
-
-django.setup()
-
 # -- Project information -----------------------------------------------------
 
-project = 'django-partitialaja'
+project = 'django-partitialajax'
 copyright = '2019, Stefan Eiermann'
 author = 'Stefan Eiermann'
 

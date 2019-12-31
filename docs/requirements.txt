@@ -4,3 +4,4 @@ sphinx-autobuild
 sphinx-theme==1.0
 sphinx-js==2.8
 sphinx-jsonschema==1.12
+-r ../requirements.txt
