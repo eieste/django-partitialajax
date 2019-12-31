@@ -6,10 +6,20 @@ deploy:
     on:
       tags: true
       repo: eieste/django-partitialajax
-  - provider: npm
+
+.npm:
+  provider: npm
     email: npmjs@ultraapp.de
     api_key:
       secure: ${npmjstoken}
     on:
       tags: true
       repo: eieste/django-partitialajax
+
+
+jobs:
+  include:
+    - stage: deploy
+      script:
+        - cd partitialajax/src
+      deploy: &npm
