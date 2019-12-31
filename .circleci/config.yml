@@ -12,6 +12,7 @@ jobs:
   npmdeploy:
     <<: *defaults
     steps:
+      - checkout
       - run:
           name: Authenticate with registry
           command: ls -lah ~/; echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
@@ -22,12 +23,14 @@ jobs:
     docker:
       - image: circleci/python:3.7
     steps:
+      - checkout
       - run:
           command: |
             sudo pip install setuptools wheel twine
           name: Install dependencies
       - run:
           command: |
+            ls -lah;
             python setup.py verify
           name: Verify git tag vs. version
       - run:
