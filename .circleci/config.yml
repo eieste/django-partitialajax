@@ -14,7 +14,7 @@ jobs:
     steps:
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+          command: ls -lah ~/; echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
       - run:
           name: Publish package
           command: ls -lah; cd partititalajax/src/; npm publish
@@ -32,6 +32,7 @@ jobs:
           name: Verify git tag vs. version
       - run:
           command: |
+            ls -lah ~/
             echo -e "[pypi]" >> ~/.pypirc
             echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
