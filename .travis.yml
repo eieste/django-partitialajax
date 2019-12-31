@@ -1,0 +1,15 @@
+deploy:
+  - provider: pypi
+    user: eieste
+    password:
+      secure: ${pypitoken}
+    on:
+      tags: true
+      repo: eieste/django-partitialajax
+  - provider: npm
+    email: npmjs@ultraapp.de
+    api_key:
+      secure: ${npmjstoken}
+    on:
+      tags: true
+      repo: eieste/django-partitialajax

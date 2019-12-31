@@ -41,21 +41,21 @@ class PartitialAjaxMixin:
                 tpl = get_template(origin[0])
                 return {
                     "template": tpl,
-                    "content": tpl.render(context)
+                    "content": tpl.render(context, request=self.request)
                 }
             elif "remote" in origin[1]:
                 with requests.get(origin[0]) as r:
                     tpl = Template(r.text)
                 return {
                     "path": origin[0],
-                    "content": tpl.render(context)
+                    "content": tpl.render(context, request=self.request)
                 }
             raise ValueError(f"Unknown origin {origin[1]}")
         else:
             tpl = get_template(origin)
             return {
                 "template": tpl,
-                "content": tpl.render(context)
+                "content": tpl.render(context, request=self.request)
             }
 
     def get_partitial_context(self, context):
@@ -71,27 +71,16 @@ class PartitialAjaxMixin:
             partitial_ctx[selector] = self.get_partitial(origin, context)
         return partitial_ctx
 
-    def get_context_data(self, *args, **kwargs):
-        """
-            Add Partitial Information to general context
-            :return dict: Context
-        """
-        ctx = super(PartitialAjaxMixin, self).get_context_data(*args, **kwargs)
-        ctx["partitial"] = self.get_partitial_context(ctx)
-        return ctx
-
-    def get_ajax_context_data(self, *args, **kwargs):
-        ctx = self.get_context_data(**kwargs)
-        json_content = {}
-        for divid, tpl in ctx["partitial"].items():
-            json_content[divid] = tpl["template"].render(ctx)
-        ctx["partitial"]["content"] = json_content
-        return ctx
+    def is_ajax(self):
+        if "is-ajax" in self.request.GET:
+            return True
+        return self.request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
     def dispatch(self, *args, **kwargs):
         request = args[0]
-        if not request.is_ajax():
-            return super(PartitialAjaxMixin, self).dispatch(*args, **kwargs)
+
+        if not self.is_ajax():
+            return super().dispatch(*args, **kwargs)
         else:
             if request.method.lower() in self.http_method_names:
                 handler = getattr(self, f"ajax_{request.method.lower()}", self.http_method_not_allowed)
@@ -99,8 +88,74 @@ class PartitialAjaxMixin:
                 handler = self.http_method_not_allowed
             return handler(*args, **kwargs)
 
+    def generate_content(self, context):
+        content_list = {}
+        for key, item in context["partitial"].items():
+            content_list[key] = item["content"]
+        return content_list
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        print(ctx)
+        ctx.update(self.get_direct_context_data(ctx))
+        ctx.update({"partitial": self.get_partitial_context(ctx)})
+        return ctx
+
+    def get_direct_context_data(self, ctx):
+        return {}
+
     def ajax_get(self, *args, **kwargs):
-        ctx = self.get_ajax_context_data(*args, **kwargs)
+        ctx = self.get_context_data()
         return JsonResponse({
-            "content": ctx["partitial"]["content"]
+            "content": self.generate_content(ctx)
+        })
+
+
+class DeletePartitialAjaxMixin(PartitialAjaxMixin):
+
+    def ajax_get(self, *args, **kwargs):
+        self.object = self.get_object()
+        ctx = self.get_context_data(object=self.object)
+        return JsonResponse({
+            "content": self.generate_content(ctx)
+        })
+
+    def ajax_post(self, *args, **kwargs):
+        super().post(*args, **kwargs)
+        return JsonResponse({
+            "status": "ok"
+        })
+
+
+class CreatePartitialAjaxMixin(PartitialAjaxMixin):
+
+    def ajax_get(self, *args, **kwargs):
+        self.object = None
+        return super().ajax_get(*args, **kwargs)
+
+    def ajax_post(self, *args, **kwargs):
+        super().post(*args, **kwargs)
+        return JsonResponse({
+            "status": "ok"
+        })
+
+
+class ListPartitialAjaxMixin(PartitialAjaxMixin):
+
+    def ajax_get(self, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        return super().ajax_get(*args, **kwargs)
+
+
+class UpdatePartitialAjaxMixin(PartitialAjaxMixin):
+    pass
+
+
+class DetailPartitialAjaxMixin(PartitialAjaxMixin):
+
+    def ajax_get(self, *args, **kwargs):
+        self.object = self.get_object()
+        ctx = self.get_context_data(object=self.object)
+        return JsonResponse({
+            "content": self.generate_content(ctx)
         })

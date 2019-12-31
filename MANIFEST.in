@@ -1,0 +1,5 @@
+include LICENSE
+include README.rst
+recursive-include partitialajax/static *
+recursive-include partitialajax/templates *
+recursive-include docs *

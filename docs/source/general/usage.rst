@@ -37,18 +37,14 @@ This object recives one option dict
    // PartitialAjax(<options>)
 
 The options dict:
- * url
- * element
- * replacetarget
- * trigger
- * triggertarget
- * children-restriction
- * reregister
- * clearinterval
- * setinterval
- * allowed-elements
- * text-event-callback
- * allow-remote-configuration
+   url: "",
+   element: "",
+   onlyChildReplace: true,
+   interval: 5000,
+   allowedElements: "all",
+   textEventCallback: "console.info",
+   restrictRemoteConfiguration: true,
+   configFromElement: true
 
 Options
 #######

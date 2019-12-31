@@ -32,14 +32,22 @@ def direct_partitial(context, selector, **kwargs):
     if selector in context["partitial"]:
         data = context["partitial"][selector]["content"]
 
+    splited_selector = split_selector(selector)
+    splited_selector["class_list"].add("ajaxpartitial-container")
+
     context["partitial"] = {
         "data": data,
+        "selector": splited_selector,
+        "prefix": "partitial",
         "specific": {
-            "selector": split_selector(selector),
-            "selectorstring": _encode_partitial_parameter(selector),
-            "reload": kwargs.get("reload", False),
-            "url": kwargs.get("url", context["request"].build_absolute_uri()),
-            "allowed_elements": _encode_partitial_parameter(kwargs.get("allowed-elements", ""))
+            "url": kwargs.get("url", ""),
+            "only-child-replace": kwargs.get("onlyChildReplace", True),
+            "interval": kwargs.get("interval", -1),
+            "allowed-elements": kwargs.get("allowedElements", "all"),
+            "text-event-callback": kwargs.get("textEventCallback", "console.info"),
+            "restrict-remote-configuration": kwargs.get("restrictRemoteConfiguration", False),
+            "config-from-element": kwargs.get("configFromElement", True),
+            "direct-load": kwargs.get("directLoad", False)
         }
     }
     return context

@@ -1,11 +1,9 @@
-<div class="ajaxpartitial-container"
-    {% if partitial.specific.selector.id %}id="{{ partitial.specific.selector.id }}"{% endif %}
-    {% if partitial.specific.selector.class_list %}class="{{ partitial.specific.selector.class_list|join:" " }}"{% endif %}
-    {% if partitial.specific.selector.attribute_list %}{% for attrname, attrvalue in partitial.specific.selector.attribute_list.items %}{{ attrname }}="{{ attrvalue }}"{% endfor %}{% endif %}
-    {% if partitial.specific.reload %}data-partitial-reload="{{ partitial.specific.reload }}"{% endif %}
-    {% if partitial.specific.url %}data-partitial-url="{{ partitial.specific.url }}"{% endif %}
-    {% if partitial.specific.selectorstring %}data-partitial-selectorstring="{{ partitial.specific.selectorstring }}"{% endif %}
-    {% if partitial.specific.allowed_elements %}data-partitial-allowed-elements="{{ partitial.specific.allowed_elements }}"{% endif %}
-     >
+<{{partitial.selector.element}}
+    {% if partitial.selector.id %}id="{{ partitial.selector.id }}"{% endif %}
+    {% if partitial.selector.class_list %}class="{{ partitial.selector.class_list|join:" " }}"{% endif %}
+    {% if partitial.selector.attribute_list %}{% for attrname, attrvalue in partitial.selector.attribute_list.items %}{{ attrname }}="{{ attrvalue }}"{% endfor %}{% endif %}
+    {% for key, value in partitial.specific.items %}{% if value %}data-{{ partitial.prefix }}-{{ key }}="{{ value }}"{% endif %}{% endfor %}
+    data-{{ partitial.prefix }}-activate=true
+>
     {{ partitial.data }}
 </div>

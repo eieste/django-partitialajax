@@ -8,3 +8,8 @@ testpartitialajax/
 partitialajax/static/
 partitialajax/src/node_modules/
 docs/build/
+*.sqlite3
+
+django_partitialajax.egg-info/
+dist/
+manage.py
