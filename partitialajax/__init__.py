@@ -1,1 +1,1 @@
-default_app_config = 'partititalajax.apps.PartitialajaxConfig'
+default_app_config = 'partitialajax.apps.PartitialajaxConfig'
