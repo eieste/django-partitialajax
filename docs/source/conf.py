@@ -14,10 +14,30 @@ import os
 import sys
 import django
 import sphinx_theme
+from django.conf import settings
 
 sys.path.insert(0, os.path.abspath('../../'))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'partitialajax.apps'
+# pass settings into configure
+settings.configure(
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'partitialajax',
+    ]
+)
+
+# call django.setup to load installed apps and other stuff
+django.setup()
+
+
+
+
+
 django.setup()
 
 # -- Project information -----------------------------------------------------
