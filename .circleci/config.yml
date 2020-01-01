@@ -24,7 +24,7 @@ jobs:
           name: Cleanup
           command: rm -Rf partitialajax/src/
       - save_cache:
-          key: pythonjs
+          key: pythonjs-{{ .Revision }}
           paths:
             - ./
 
@@ -60,7 +60,7 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - restore_cache:
-          key: pythonjs
+          key: pythonjs-{{ .Revision }}
       - run:
           command: |
             sudo pip install setuptools wheel twine
