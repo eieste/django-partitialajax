@@ -2,7 +2,7 @@
 #
 # Check {{ '/2.0/language-javascript/' | docs_url }} for more details
 #
-version: 2
+version: 2.1
 
 defaults: &defaults
   docker:
