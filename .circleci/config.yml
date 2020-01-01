@@ -90,10 +90,14 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - pythonjsbuild:
+            branches:
+              ignore: /.*/
+      - pythonjsbuild
       - pypideploy:
           requires:
             - pythonjsbuild
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
