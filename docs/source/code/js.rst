@@ -2,6 +2,6 @@
 Javascript
 ==========
 
-.. js:autoclass:: PartitialAjax
-   :members:
-   :private-members:
+js:autoclass:: PartitialAjax
+:members:
+:private-members:
