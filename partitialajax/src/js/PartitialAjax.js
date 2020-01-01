@@ -12,31 +12,35 @@ function withDefault(defaultDict, data){
 }
 
 
+/** Class representing a point. */
 export default class PartitialAjax {
+
     /**
-     * Foobar
-     * @param options Object bleibe
-     * @param events Object bfkd
+     * @typedef {Object} PartitialAjax
+     * @param options dict with configuration options for each seperate Partitial. See: :ref:`partitial-ajax-options`
+     * @param event dict with function bindings for hooks. See :ref:`partitial-ajax-events`
      */
     constructor(options, event) {
         let self = this;
         self.intervalFlag = undefined;
         self.event = event || {};
 
-        let search_info = {
+        // Add this Partitial to constant list
+        partitial_ajax_list.push({
             element: options.trigger_element || options.element,
             partitialAjax: self
-        };
-        partitial_ajax_list.push(search_info);
+        });
 
+        // Test if options is only a Element
+        // (the remaining configuration will be loaed from this element)
         if(options instanceof Element){
             self.options = {
                 "element": options
             };
         }else{
+            // if options is the options object merge userconfiguration with defaults
             self.options = withDefault(settings.options, options);
         }
-
 
         // if allowed use element to get configuration
         if(self.options.configFromElement){
@@ -44,10 +48,12 @@ export default class PartitialAjax {
             self.options = withDefault(self.options, extractConfigFromElement(elem))
         }
 
+        // Trigger directly a initial request to fill this partitial
         if(self.options.directLoad){
             self.getFromRemote();
         }
 
+        // If interval is configured setup the refresh interval (if interval is smaller than 100 the config will be ignored
         try{
             let interval = parseInt(self.options.interval);
             if(interval > 100){
@@ -59,9 +65,14 @@ export default class PartitialAjax {
             jsconsole("DEBUG", e);
         }
 
+        // Trigger afterSetup event
         self.callEvent("afterSetup", self);
     }
 
+    /**
+     * Find a Partitial by the given element argument (used paritial_ajax_list to find it)
+     * @return {boolean|PartitialAjax} Return the PartitialAjax object if found or return false
+     */
     static getPartitialFromElement(element){
         let result = false;
         partitial_ajax_list.forEach(function(item){
@@ -72,10 +83,16 @@ export default class PartitialAjax {
         return result;
     }
 
+    /**
+     * Run autoconfiguration; This method find all elements with data-partitial configuration attributes and setups partitils by the given attributes
+     */
     static initialize(){
         elementBinding();
     }
 
+    /**
+     * Load Partitial from remote Source
+     */
     getFromRemote(){
         let self = this;
 
@@ -88,72 +105,91 @@ export default class PartitialAjax {
             if (response.status >= 200 && response.status < 300) {
                 return response
             } else {
-                var error = new Error(response.statusText);
-                error.response = response;
-                throw error
+                self.callEvent("onRemoteError", {"response": response});
             }
         }).then(function(response) {
             return response.json();
         }).then(function(data) {
             self.callEvent("onRemoteData");
+            // If allowed by settings allow remote configuration
             if(!self.options.restrictRemoteConfiguration){
                 self.handleOptions(data);
             }
+            // Handle Text Informations
             if(data.hasOwnProperty("text")){
                 self.handleTextData(data);
             }
 
+            // Handle Partitial Information
             if(data.hasOwnProperty("content")){
                 self.handlePartitialData(data);
             }
             self.callEvent("onHandeldRemoteData", {"remoteData": data});
 
         }).catch(function(ex) {
-            console.log('parsing failed', ex)
+            self.callEvent("onResponseError", {"exception": ex});
         });
     }
 
+    /**
+     * Reconfigure current ParitialAjax object with the remote Option information
+     * @param data Parsed remote json Response
+     */
     handleOptions(data){
-
         self.remoteOption = Object.assign(data.option, settings.remote);
-
-
+        // ToDo Update Behavior of current PartitialAjax
     }
 
+    /**
+     *
+     * Handle Partitial Data
+     * @param data Parsed remote json Response
+     */
     handlePartitialData(data){
         let self = this;
+        // Itterate over each content selecotr
         Object.keys(data.content).forEach(function(selector){
             let content = data.content[selector];
 
+            // If PartitialAjax options element is the same as remote selector; replace content directly
             if(self.options.element == document.querySelectorAll(selector)[0]){
                 self._replaceContent(self.options.element, content);
             }else if(self.options.onlyChildReplace) {
-
-                let parts = self.options.element.querySelectorAll(selector);
-                for(let i = 0; i < parts.length; i++){
-                    self._replaceContent(parts[i], content);
-                }
+                // if "onlyChildReplace" is activated, make sure that all selectors are a child element of the PartitialAjax element
+                let parent = self.options.element;
             }else{
-                let parts = document.querySelectorAll(selector);
-                for(let i = 0; i < parts.length; i++){
-                    self._replaceContent(parts[i], content);
-                }
+                // Allow to replace each element with the same selector
+                let parent = document;
             }
+            let parts = parent.querySelectorAll(selector);
+            parts.forEach(function(key){
+                console.log(key);
+                self._replaceContent(parts[key], content);
+            });
         });
     }
 
+    /**
+     * Private Method; Replace content by given element
+     * @param element Element which content should be replaced
+     * @param content New content for element
+     * @private
+     */
     _replaceContent(element, content){
         let self = this;
+        // Check if selector which should be replaced is allowed by allowedElements option
         let allowed_elements_selector_list = document.querySelectorAll(self.options.allowedElements.split(","));
         let allowed_elements_list = [];
 
-        for(let i = 0; i <= allowed_elements_selector_list.length; i++){
-            let element_list = document.querySelectorAll(allowed_elements_selector_list[i]);
+        //If allowedElement Options is set replace only valid elements
+        allowed_elements_selector_list.forEach(function(key){
+            let element_list = document.querySelectorAll(allowed_elements_selector_list[key]);
             allowed_elements_list = [...allowed_elements_list, ...element_list]
-        }
 
-        for(let i = 0; i <= allowed_elements_list.length;i++){
-            let elem = allowed_elements_list[i];
+        });
+
+        allowed_elements_list.forEach(function(key){
+            let elem = allowed_elements_list[key];
 
             if(elem == element){
                 let result = self.callEvent("onReplaceContent", {"element": element, "content": content});
@@ -163,8 +199,9 @@ export default class PartitialAjax {
                     result.element.innerHTML = result.content;
                 }
             }
-        }
+        });
 
+        // allow each defined element
         if(self.options.allowedElements == "all"){
             let result = self.callEvent("onReplaceContent", {"element": element, "content": content});
 
@@ -176,6 +213,11 @@ export default class PartitialAjax {
         }
     }
 
+    /**
+     * Trigger textEventCallback method for each transmited text key:value pair
+     * @param data Remote json Response Data
+     */
+
     handleTextData(data){
         // Handle Text Only Information
         Object.keys(data.text).forEach(function(key){
@@ -185,11 +227,21 @@ export default class PartitialAjax {
         });
     }
 
+    /**
+     * Register/Overwrite a new Hook on a created PartitialAjax Object
+     * @param eventname Name ov event/hook See: :ref:`partitial-ajax-events`
+     * @param callback Function which should be triggerd
+     */
     register(eventname, callback){
         let self = this;
         self.event[eventname] = callback;
     }
 
+    /**
+     * executing the stored funktino when the hook is reached
+     * @param eventname
+     * @param data argument that is passed into the hook method
+     */
     callEvent(eventname, data){
         let self = this;
         Object.keys(self.event).forEach(function(key){

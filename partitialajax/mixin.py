@@ -19,11 +19,9 @@ class PartitialAjaxMixin:
         """
             Returns a dict with keys as selectors and values as partitial file paths
             :return: dict
-
             :Example:
             {"#foo": "myapp/partitials/foo.html"}
         """
-
         if len(self.partitial_list) <= 0:
             raise ValueError("partial list must not be empty")
         return self.partitial_list

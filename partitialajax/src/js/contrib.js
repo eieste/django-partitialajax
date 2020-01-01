@@ -1,3 +1,8 @@
+/**
+ * Get Information from given cookie (used for csrf)
+ * @param name cookieName
+ * @returns {null}
+ */
 export function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -14,6 +19,11 @@ export function getCookie(name) {
     return cookieValue;
 }
 
+/**
+ * Unsued console infom method
+ * @param level Level: (all console.* levels)
+ * @param info Text message
+ */
 export function jsconsole(level, info) {
     switch (level.toLowerCase()) {
         case "debug":
@@ -24,10 +34,20 @@ export function jsconsole(level, info) {
     }
 }
 
+/**
+ * Converts camelCase to kebab-case
+ * @param string camelCase String
+ * @returns {string} converted kebab-case string
+ */
 export function camelToKebab(string) {
     return string.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 }
 
+/**
+ * Converts kebab-case to camelCase string
+ * @param string kebab-case-string
+ * @returns {String|void|*} new converted camelCaseString
+ */
 export function kebabToCamel(string){
     return string.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
 }

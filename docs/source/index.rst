@@ -12,6 +12,7 @@ Last Version 0.1.5
    :maxdepth: 2
    :caption: General:
 
+   general/installation
    general/information
    general/jsonprotocol
    general/templatetags

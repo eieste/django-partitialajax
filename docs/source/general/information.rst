@@ -2,13 +2,25 @@
 Information
 ===========
 
-This libary can halps you to replace parts of your django project.
-You have a bunch of different possibilities.
+This libary can helps you to replace parts of your django project.
 
- * One page can one or multiple Partitials
- * Each partitial can be reloaded via Ajax
- * Possible Reload Options
-   * Reload on manual Click
-   * Reload after Time
-   * Only AjaxLoad on Page Load
- * All reload options can be combined
+to make your content replacement as comfortable as possible the library offers you
+
+ * django: templatetags
+ * django: mixins
+ * js/npm: js libary
+
+With these options its very easy to replace parts of your project.
+
+
+Limitations
+===========
+
+ * This libary doesnt work with functional based views
+ * This libary doesnt handle submits from partitial forms (but you can just upgrade this)
+
+
+Recommend
+=========
+
+You can use webpack to build your own js files. just simply use `npm install django-partitialajax`

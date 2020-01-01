@@ -12,12 +12,8 @@
       "$id": "#/properties/content",
       "type": "object",
       "properties": {
-        "#akhjlasdkg": {
-          "$id": "#/properties/content/properties/selector",
-          "type": "string",
-          "default": null,
-          "pattern": "\\#([a-z0-9]+)|\\.([a-z0-9]+)|(\\[([a-z0-9\\-]*)\\=\\\"(\\S+)\\\"\\])"
-        }
+        "key": {"type": "string"},
+        "value": {"type": "string"},
       }
     },
     "options": {

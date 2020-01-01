@@ -79,6 +79,8 @@ html_theme = 'sphinx_rtd_theme'
 #html_static_path = ['_static']
 
 
-js_source_path = "../../partitialajax/src/js/"
+js_source_path = os.path.abspath("../../partitialajax/src/js/")
+print(js_source_path)
 
 master_doc = 'index'
+autosectionlabel_prefix_document = True
