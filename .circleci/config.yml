@@ -16,6 +16,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Change dir
+          command: cd partitialajax/src/
+      - run:
           name: Install Dependencies
           command: npm install
       - run:
@@ -23,7 +26,7 @@ jobs:
           command: npm run build
       - run:
           name: Cleanup
-          command: rm -Rf src/
+          command: rm -Rf ../src/
   qa:
     docker:
       - image: circleci/python:3.7
