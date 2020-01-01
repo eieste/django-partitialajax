@@ -8,9 +8,6 @@ defaults: &defaults
   docker:
     - image: circleci/node:8.9.1
 
-orbs:
-  coveralls: coveralls/coveralls@1.0.4
-
 jobs:
 
   qa:
@@ -20,12 +17,17 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install --user -r requirements.txt
+          command: pip3 install --user -r requirements.txt; pip3 install --user coveralls
       - run:
           name: Install and Test
           command: python3 test.py
-      - coveralls/upload:
-          parallel: true
+      - run:
+          name: Coverage
+          command: coverage run --source=django,partitialajax test.py
+      - run:
+          name: Coveralls
+          command: coveralls
+
 
   npmdeploy:
     <<: *defaults
