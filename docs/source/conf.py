@@ -80,3 +80,5 @@ html_theme_path = [sphinx_theme.get_html_theme_path()]
 
 
 js_source_path = "../../partitialajax/src/js/"
+
+master_doc = 'index'
