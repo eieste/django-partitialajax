@@ -6,7 +6,7 @@
 Welcome to django-partitialaja's documentation!
 ===============================================
 
-Last Version 1.0.0
+Last Version 0.1.0
 
 .. toctree::
    :maxdepth: 2

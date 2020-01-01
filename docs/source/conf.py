@@ -38,7 +38,7 @@ django.setup()
 # -- Project information -----------------------------------------------------
 
 project = 'django-partitialajax'
-copyright = '2019, Stefan Eiermann'
+copyright = '2019-2020, Stefan Eiermann'
 author = 'Stefan Eiermann'
 
 

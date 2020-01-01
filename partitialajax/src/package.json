@@ -1,6 +1,6 @@
 {
   "name": "django-partitialajax",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Django JS Libary for Dynamic HTML Loading (Partitials)",
   "keywords": ["django", "python", "partitial", "ajax", "html", "dynamic"],
   "scripts": {
