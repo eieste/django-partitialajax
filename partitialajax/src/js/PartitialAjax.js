@@ -15,7 +15,9 @@ function withDefault(defaultDict, data){
 export default class PartitialAjax {
     /**
      * Foobar
-    */
+     * @param options Object bleibe
+     * @param events Object bfkd
+     */
     constructor(options, event) {
         let self = this;
         self.intervalFlag = undefined;
