@@ -9,7 +9,21 @@ defaults: &defaults
     - image: circleci/node:8.9.1
 
 jobs:
-
+  pythonjsbuild:
+    docker:
+      - image: circleci/node:8.9.1
+    working_directory: ~/pythonjsbuild
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Build Webpack
+          command: npm run build
+      - run:
+          name: Cleanup
+          command: rm -Rf src/
   qa:
     docker:
       - image: circleci/python:3.7
@@ -27,8 +41,6 @@ jobs:
       - run:
           name: Coveralls
           command: coveralls
-
-
   npmdeploy:
     <<: *defaults
     steps:
@@ -42,6 +54,7 @@ jobs:
   pypideploy:
     docker:
       - image: circleci/python:3.7
+    working_directory: ~/pythonjsbuild
     steps:
       - checkout
       - run:
@@ -56,17 +69,22 @@ jobs:
           name: Init .pypirc
       - run:
           command: |
+            ls -lah partitialajax/;
             python3 setup.py sdist bdist_wheel
           name: Create packages
       - run:
           command: |
             twine upload dist/*
           name: Upload to pypi
+
 workflows:
   version: 2
   publish:
     jobs:
       - qa 
       - npmdeploy
-      - pypideploy
+      - pythonjsbuild
+      - pypideploy:
+          requires:
+            - pythonjsbuild
 
