@@ -19,8 +19,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install dependencies
+          command: pip3 install -r requirements.txt
+      - run:
           name: Install and Test
-          command: python3 setup.py test
+          command: python3 test.py
       - coveralls/upload:
           parallel: true
 
