@@ -21,6 +21,7 @@ except ImportError:
 
 
 def run_tests(*test_args):
+    TestRunner = get_runner(settings)
     test_runner = TestRunner()
     failures = test_runner.run_tests(["tests"])
     sys.exit(bool(failures))
