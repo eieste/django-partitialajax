@@ -30,10 +30,10 @@ jobs:
       - checkout
       - run:
           name: Authenticate with registry
-          command: ls -lah ~/; echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/.npmrc
       - run:
           name: Publish package
-          command: ls -lah; cd partitialajax/src/; npm publish
+          command: cd partitialajax/src/; npm publish
   pypideploy:
     docker:
       - image: circleci/python:3.7
@@ -45,7 +45,6 @@ jobs:
           name: Install dependencies
       - run:
           command: |
-            ls -lah ~/
             echo -e "[pypi]" >> ~/.pypirc
             echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
