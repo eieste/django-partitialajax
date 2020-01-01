@@ -6,6 +6,7 @@ try:
     import django
     from django.conf import settings
 
+    from django.test.utils import get_runner
     settings.configure(      
         INSTALLED_APPS=[
             "django.contrib.auth",
@@ -14,13 +15,18 @@ try:
             "partitialajax",
         ])
     django.setup()
-    import unittest
+    
 except ImportError:
     raise ImportError("To fix this error, run: pip install -r requirements.txt")
 
 
 def run_tests(*test_args):
-    unittest.main()
-
+    test_runner = TestRunner()
+    failures = test_runner.run_tests(["tests"])
+    sys.exit(bool(failures))
+    
+    
+    
+    
 if __name__ == '__main__':
     run_tests(*sys.argv[1:])
