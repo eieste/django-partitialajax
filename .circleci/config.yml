@@ -12,7 +12,6 @@ jobs:
   pythonjsbuild:
     docker:
       - image: circleci/node:8.9.1
-    working_directory: ~/pythonjsbuild
     steps:
       - checkout
       - run:
@@ -24,6 +23,11 @@ jobs:
       - run:
           name: Cleanup
           command: rm -Rf partitialajax/src/
+       - save_cache:
+           key: pythonjs
+           paths:
+             - ./
+
   qa:
     docker:
       - image: circleci/python:3.7
@@ -54,8 +58,11 @@ jobs:
   pypideploy:
     docker:
       - image: circleci/python:3.7
-    working_directory: ~/pythonjsbuild
     steps:
+      - restore_cache:
+          key: pythonjs
+          paths:
+            - ./
       - run:
           command: |
             sudo pip install setuptools wheel twine
@@ -68,7 +75,7 @@ jobs:
           name: Init .pypirc
       - run:
           command: |
-            ls -lah partitialajax/;
+            ls -lah;
             python3 setup.py sdist bdist_wheel
           name: Create packages
       - run:
