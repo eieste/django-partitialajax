@@ -20,7 +20,7 @@ jobs:
       - checkout
       - run:
           name: Install and Test
-          command: python3 setup.py install; python3 setup.py test
+          command: python3 setup.py test
       - coveralls/upload:
           parallel: true
 
