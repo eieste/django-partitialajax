@@ -13,7 +13,9 @@ function withDefault(defaultDict, data){
 
 
 export default class PartitialAjax {
-
+    /**
+     * Foobar
+    */
     constructor(options, event) {
         let self = this;
         self.intervalFlag = undefined;
