@@ -16,17 +16,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Change dir
-          command: cd partitialajax/src/
-      - run:
           name: Install Dependencies
-          command: npm install
+          command: cd partitialajax/src/; npm install
       - run:
           name: Build Webpack
-          command: npm run build
+          command: cd partitialajax/src/; npm run build
       - run:
           name: Cleanup
-          command: rm -Rf ../src/
+          command: rm -Rf partitialajax/src/
   qa:
     docker:
       - image: circleci/python:3.7
@@ -59,7 +56,6 @@ jobs:
       - image: circleci/python:3.7
     working_directory: ~/pythonjsbuild
     steps:
-      - checkout
       - run:
           command: |
             sudo pip install setuptools wheel twine
