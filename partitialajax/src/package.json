@@ -2,19 +2,26 @@
   "name": "django-partitialajax",
   "version": "0.1.0",
   "description": "Django JS Libary for Dynamic HTML Loading (Partitials)",
-  "keywords": ["django", "python", "partitial", "ajax", "html", "dynamic"],
+  "keywords": [
+    "django",
+    "python",
+    "partitial",
+    "ajax",
+    "html",
+    "dynamic"
+  ],
   "scripts": {
     "build": "webpack",
     "watch": "webpack -d --watch"
   },
   "author": "Stefan Eiermann",
   "license": "MIT",
-  "dependencies": {
-    "webpack": "^4.41.4",
-    "webpack-cli": "^3.3.10"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/eieste/django-partitialajax.git"
+  },
+  "devDependencies": {
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   }
 }

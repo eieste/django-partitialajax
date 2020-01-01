@@ -85,10 +85,15 @@ workflows:
   version: 2
   publish:
     jobs:
-      - qa 
-      - npmdeploy
-      - pythonjsbuild
+      - qa
+      - npmdeploy:
+          filters:
+            tags:
+              only: /^v.*/
+      - pythonjsbuild:
       - pypideploy:
           requires:
             - pythonjsbuild
-
+          filters:
+            tags:
+              only: /^v.*/
