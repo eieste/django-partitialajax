@@ -79,4 +79,4 @@ html_theme_path = [sphinx_theme.get_html_theme_path()]
 #html_static_path = ['_static']
 
 
-js_source_path = "../partitialajax/src/js/"
+js_source_path = "../../partitialajax/src/js/"
