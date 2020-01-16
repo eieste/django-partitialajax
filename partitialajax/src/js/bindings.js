@@ -49,5 +49,7 @@ export function elementBinding(element){
             new PartitialAjax(opt);
         }
 
+        console.log(elem, opt);
+
     });
 }
