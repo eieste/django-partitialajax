@@ -163,8 +163,7 @@ export default class PartitialAjax {
             }
             let parts = parent.querySelectorAll(selector);
             parts.forEach(function(key){
-                console.log(key);
-                self._replaceContent(parts[key], content);
+                self._replaceContent(key, content);
             });
         });
     }
