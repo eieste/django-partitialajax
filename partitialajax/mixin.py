@@ -13,7 +13,7 @@ class PartitialAjaxMixin:
 
     #: Define here all partitial html files used in the template_name File
     #: Write as follows: {"#foobar": "myapp/partitial/foo.html"}
-    partitial_list = {}
+    partitial_list = dict()
 
     def get_partitial_list(self, *args, **kwargs):
         """
@@ -64,7 +64,7 @@ class PartitialAjaxMixin:
             :param context: context dict
             :return: context dict
         """
-        partitial_ctx = {}
+        partitial_ctx = dict()
         for selector, origin in self.get_partitial_list().items():
             partitial_ctx[selector] = self.get_partitial(origin, context)
         return partitial_ctx
