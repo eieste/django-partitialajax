@@ -44,7 +44,7 @@ jobs:
           command: coverage run testhelper.py
       - run:
           name: Coveralls
-          command: coveralls
+          command: coveralls --base_dir partitialajax
   npmdeploy:
     <<: *defaults
     steps:
