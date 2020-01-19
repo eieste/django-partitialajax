@@ -7,10 +7,16 @@ export function extractConfigFromElement(element){
     let opt = {};
     Object.keys(settings.options).forEach(function (key) {
         let kebab = camelToKebab(key);
-        let new_val = element.getAttribute("data-"+ (settings.configs.dataAttributePrefix ? settings.configs.dataAttributePrefix+"-" : "")+kebab);
+        let new_val = element.getAttribute("data-" + (settings.configs.dataAttributePrefix ? settings.configs.dataAttributePrefix + "-" : "") + kebab);
 
-        if(new_val){
-            opt[key] = new_val
+        if(new_val != null){
+            if (new_val.toLowerCase() === "true") {
+                opt[key] = true;
+            } else if (new_val.toLowerCase() === "false") {
+                opt[key] = false;
+            } else {
+                opt[key] = new_val;
+            }
         }
     });
     return opt;
@@ -48,8 +54,5 @@ export function elementBinding(element){
         }else{
             new PartitialAjax(opt);
         }
-
-        console.log(elem, opt);
-
     });
 }

@@ -2,7 +2,7 @@
     {% if partitial.selector.id %}id="{{ partitial.selector.id }}"{% endif %}
     {% if partitial.selector.class_list %}class="{{ partitial.selector.class_list|join:" " }}"{% endif %}
     {% if partitial.selector.attribute_list %}{% for attrname, attrvalue in partitial.selector.attribute_list.items %}{{ attrname }}="{{ attrvalue }}"{% endfor %}{% endif %}
-    {% for key, value in partitial.specific.items %}{% if value %}data-{{ partitial.prefix }}-{{ key }}="{{ value }}"{% endif %}{% endfor %}
+    {% for key, value in partitial.specific.items %}data-{{ partitial.prefix }}-{{ key }}="{{ value }}"{% endfor %}
     data-{{ partitial.prefix }}-activate=true
 >
     {{ partitial.data }}
