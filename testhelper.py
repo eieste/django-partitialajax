@@ -1,19 +1,35 @@
 #!/usr/bin/env python
 
 import sys
+import os
 
 try:
     import django
     from django.conf import settings
 
     from django.test.utils import get_runner
-    settings.configure(      
+    BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "partitialajax")
+    settings.configure(
         INSTALLED_APPS=[
             "django.contrib.auth",
             "django.contrib.contenttypes",
             "django.contrib.sites",
             "partitialajax",
-        ])
+        ],
+        DEBUG=True,
+        USE_TZ=True,
+        DATABASES={
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+            }
+        },
+        TEMPLATES=[
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': [os.path.join(BASE_DIR, "templates")],
+            }
+        ]
+    )
     django.setup()
     
 except ImportError:

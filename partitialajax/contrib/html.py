@@ -1,7 +1,10 @@
 import re
-
+from partitialajax.exceptions import InvalidSelectorString
 # pattern = re.compile(r'\#(?P<id>[a-z0-9]+)|\.(?P<class>[a-z0-9]+)|(?P<attr>\[(?P<attrname>[a-z0-9\-]*)\=\"(?P<attrval>\S+)\"\])', re.X|re.M)
-pattern = re.compile(r'^(?P<element>[a-z0-9]*)\#(?P<id>[a-z0-9\-]+)|\.(?P<class>[a-z0-9\-]+)|(?P<attr>\[(?P<attrname>[a-z0-9\-]*)\=\"(?P<attrval>\S+)\"\])$', re.X|re.M)
+#pattern = re.compile(r'^(?P<element>[a-zA-Z0-9]*)|\#(?P<id>[a-zA-Z0-9\-]+)|\.(?P<class>[a-zA-Z0-9\-]+)|(?P<attr>\[(?P<attrname>[a-zA-Z0-9\-]*)\=\"(?P<attrval>\S+)\"\])$', re.X|re.M)
+# pattern = re.compile(r'^(?P<element>[a-zA-Z0-9]*)|^\#(?P<id>[a-zA-Z0-9\-]+)|^\.(?P<class>[a-zA-Z0-9\-]+)|^(?P<attr>\[(?P<attrname>[a-zA-Z0-9\-]*)\=\"(?P<attrval>\S+)\"\])$', re.X|re.M)
+pattern = re.compile(r'(?:(?P<element>^[\w]*))?(?:\#(?P<id>[\w|\-]+))?(?:\.(?P<class>[\w|\-]+))?(?P<attr>(?:\[(?P<attrname>[\w|\-]+)\=\"(?P<attrval>[\w|\-]+)\"\]))?')
+
 
 def split_selector(selector):
     """
@@ -14,10 +17,10 @@ def split_selector(selector):
     """
 
     element_attributes = {
-        "element": "div",
+        "element": None,
         "id": None,
         "class_list": set(),
-        "attribute_list": {},
+        "attribute_list": dict(),
     }
 
     if bool(pattern.search(selector)):
@@ -25,6 +28,8 @@ def split_selector(selector):
         for match in match_list:
 
             if match.group("id"):
+                if element_attributes["id"] is not None:
+                    raise InvalidSelectorString("A HTML-Element can only Contain a single ID")
                 element_attributes["id"] = match.group("id")
 
             if match.group("class"):
@@ -34,11 +39,8 @@ def split_selector(selector):
                 element_attributes["attribute_list"][match.group("attrname")] = match.group("attrval")
 
             if match.group("element"):
-                print(match.group("element"))
                 element_attributes["element"] = match.group("element")
 
     else:
         raise ValueError("only a-z0-9#. are allowed as selectors.")
     return element_attributes
-
-#print(split_selector("#foo#bar#hallo#welt.test.abc.hallowelt.foobar#netdas#istdoch#toll.sdfasf.asdf#asdf#foo#bar[data-foo=\"abc\"].foo#asdf"))

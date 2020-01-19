@@ -9,6 +9,7 @@ partitialajax/static/
 partitialajax/src/node_modules/
 docs/build/
 *.sqlite3
+.coverage
 
 django_partitialajax.egg-info/
 dist/

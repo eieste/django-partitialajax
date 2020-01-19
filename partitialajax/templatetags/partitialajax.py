@@ -2,6 +2,7 @@ from django import template
 from partitialajax.contrib.html import split_selector
 from django.utils.translation import pgettext_lazy as __
 import base64
+from partitialajax.exceptions import PartitialNotFound
 
 register = template.Library()
 
@@ -16,6 +17,14 @@ def _encode_partitial_parameter(data):
     return base64.b64encode(data.encode("utf-8")).decode()
 
 
+def fixbool(data):
+    bool_attrs = ("only-child-replace", "restrict-remote-configuration", "config-from-element", "direct-load")
+    for key, item in data.items():
+        if key in bool_attrs:
+            if item:
+                return "true"
+            return "false"
+
 @register.inclusion_tag('partitialajax/partitial_include.html', takes_context=True)
 def direct_partitial(context, selector, **kwargs):
     """
@@ -29,10 +38,17 @@ def direct_partitial(context, selector, **kwargs):
 
     data = __("selector at template not defined in view error message", "Sorry unable to get Element to display Data")
 
+    if "partitial" not in context:
+        raise PartitialNotFound("No Partitials defined")
+
     if selector in context["partitial"]:
         data = context["partitial"][selector]["content"]
+    else:
+        raise PartitialNotFound(f"No Partitial with selector '{selector}' was found")
 
     splited_selector = split_selector(selector)
+    if splited_selector["element"] is None:
+        splited_selector["element"] = "div"
     splited_selector["class_list"].add("ajaxpartitial-container")
 
     context["partitial"] = {
@@ -50,4 +66,7 @@ def direct_partitial(context, selector, **kwargs):
             "direct-load": kwargs.get("directLoad", False)
         }
     }
+
+    context["partitial"]["specific"] = fixbool(context["partitial"]["specific"])
+
     return context

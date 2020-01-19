@@ -127,6 +127,7 @@ export default class PartitialAjax {
             self.callEvent("onHandeldRemoteData", {"remoteData": data});
 
         }).catch(function(ex) {
+            throw ex;
             self.callEvent("onResponseError", {"exception": ex});
         });
     }
@@ -136,7 +137,10 @@ export default class PartitialAjax {
      * @param data Parsed remote json Response
      */
     handleOptions(data){
-        self.remoteOption = Object.assign(data.option, settings.remote);
+
+        if("option" in data){
+            self.remoteOption = Object.assign(data.option, settings.remote);
+        }
         // ToDo Update Behavior of current PartitialAjax
     }
 
@@ -150,18 +154,20 @@ export default class PartitialAjax {
         // Itterate over each content selecotr
         Object.keys(data.content).forEach(function(selector){
             let content = data.content[selector];
-
+            let parent_element = null;
             // If PartitialAjax options element is the same as remote selector; replace content directly
             if(self.options.element == document.querySelectorAll(selector)[0]){
                 self._replaceContent(self.options.element, content);
+                return;
             }else if(self.options.onlyChildReplace) {
                 // if "onlyChildReplace" is activated, make sure that all selectors are a child element of the PartitialAjax element
-                let parent = self.options.element;
+                parent_element = self.options.element;
             }else{
                 // Allow to replace each element with the same selector
-                let parent = document;
+                parent_element = document;
             }
-            let parts = parent.querySelectorAll(selector);
+
+            let parts = parent_element.querySelectorAll(selector);
             parts.forEach(function(key){
                 self._replaceContent(key, content);
             });

@@ -11,13 +11,22 @@ export function extractConfigFromElement(element){
 
         if(new_val != null){
             if (new_val.toLowerCase() === "true") {
-                opt[key] = true;
+                new_val = true;
             } else if (new_val.toLowerCase() === "false") {
-                opt[key] = false;
-            } else {
-                opt[key] = new_val;
+                new_val = false;
             }
         }
+
+        if(key === "url"){
+            if(new_val === "" || new_val == null){
+                new_val = element.getAttribute("href");
+            }
+        }
+
+        if(new_val != "" && new_val != null){
+            opt[key] = new_val
+        }
+
     });
     return opt;
 }
