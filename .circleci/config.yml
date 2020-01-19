@@ -85,12 +85,7 @@ workflows:
   version: 2
   publish:
     jobs:
-      - qa:
-#          filters:
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
+      - qa
       - npmdeploy:
           filters:
             tags:
