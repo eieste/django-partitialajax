@@ -36,5 +36,5 @@ class DirectPartitialTemplateTagTestCase(TestCase):
         )
         html = template_to_render.render(context)
 
-        self.assertEqual(re.sub(r'\s*', '', """<specialElementid="myid"class="ajaxpartitial-container"data-partitial-url=""data-partitial-only-child-replace="True"data-partitial-interval="-1"data-partitial-allowed-elements="all"data-partitial-text-event-callback="console.info"data-partitial-restrict-remote-configuration="False"data-partitial-config-from-element="True"data-partitial-direct-load="False"data-partitial-activate=true>hallotest</div>"""),
+        self.assertEqual(re.sub(r'\s*', '', '<specialElementid="myid"class="ajaxpartitial-container"data-partitial-only-child-replace="false"data-partitial-interval="-1"data-partitial-allowed-elements="all"data-partitial-text-event-callback="console.info"data-partitial-restrict-remote-configuration="false"data-partitial-config-from-element="false"data-partitial-direct-load="false"data-partitial-activate="true">hallotest</specialElement>'),
                          re.sub(r'\s*', '', html))
