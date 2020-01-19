@@ -19,4 +19,67 @@ npm install django-partitialajax
 
 ```
 
-For more Information read the docs
+For more Information read the [Documentation](https://django-partitialajax.readthedocs.io/en/latest/)
+
+## Quick start
+
+settings.py
+```python
+    INSTALLED_APPS = [
+        ...
+        partitialajax
+    ]
+```
+
+views.py
+```python
+from partitialajax.mixin import ListPartitialAjaxMixin
+from django.views.generic import ListView
+
+class BookListItem(ListPartitialAjaxMixin, ListView):
+    template_name = "book/list.html"
+    model = Book
+    partitial_list = {
+        "tbody#book-list-partitial":"book/partitial/list.html"
+    }
+```
+
+book/list.html
+```html
+{% load partitialajax %}
+
+<table>
+    <thead>
+        <th>ID</th>    
+        <th>Name</th>    
+        <th>Author</th>    
+    </thead>
+    {% direct "tbody#book-list-partitial" %}
+</table>
+```
+
+book/partitial/list.html
+```html
+{% for book in object_list %}
+    <tr>
+        <td>{{object.pk}}</td>
+        <td>{{object.name}}</td>
+        <td>{{object.author}}</td>
+    </tr>
+{% endfor %}
+```
+
+## And what's different about an include now?
+
+an include is rendered directly by django, so that no update can take place in the client side.
+With django-partitialajax you can reload this part.
+How? Just use the following JS code
+
+```js
+import {PartitialAjax} from "django-partitialajax";
+
+let partitial_element = document.getElementById("book-list-partitial");
+let partitial = PartitialAjax.getPartitialFromElement(partitial_element);
+
+partitial.getFromRemote();
+```
