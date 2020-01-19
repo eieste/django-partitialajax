@@ -20,10 +20,14 @@ def _encode_partitial_parameter(data):
 def fixbool(data):
     bool_attrs = ("only-child-replace", "restrict-remote-configuration", "config-from-element", "direct-load")
     for key, item in data.items():
+
         if key in bool_attrs:
             if item:
-                return "true"
-            return "false"
+                data[key] = "true"
+            data[key] = "false"
+        else:
+            data[key] = item
+    return data
 
 @register.inclusion_tag('partitialajax/partitial_include.html', takes_context=True)
 def direct_partitial(context, selector, **kwargs):
