@@ -41,7 +41,7 @@ jobs:
           command: python3 testhelper.py
       - run:
           name: Coverage
-          command: coverage run --source=django,partitialajax testhelper.py
+          command: coverage run testhelper.py
       - run:
           name: Coveralls
           command: coveralls
