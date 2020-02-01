@@ -42,7 +42,9 @@ export default {
         /**
          * Load data directly on initialization
          */
-        directLoad: true
+        directLoad: true,
+
+        self: ""
     },
     remote: {
         reRegister: true,

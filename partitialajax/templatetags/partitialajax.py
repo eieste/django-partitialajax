@@ -46,6 +46,7 @@ def direct_partitial(context, selector, **kwargs):
     if "partitial" not in context:
         raise PartitialNotFound("No Partitials defined")
 
+
     if selector in context["partitial"]:
         data = context["partitial"][selector]["content"]
     else:
@@ -56,11 +57,11 @@ def direct_partitial(context, selector, **kwargs):
         splited_selector["element"] = "div"
     splited_selector["class_list"].add("ajaxpartitial-container")
 
-    context["partitial"] = {
+    context["partitial"].update({ "current": {
         "data": data,
         "selector": splited_selector,
         "prefix": "partitial",
-        "specific": {
+        "specific": fixbool({
             "url": kwargs.get("url", ""),
             "only-child-replace": kwargs.get("onlyChildReplace", True),
             "interval": kwargs.get("interval", -1),
@@ -68,9 +69,9 @@ def direct_partitial(context, selector, **kwargs):
             "text-event-callback": kwargs.get("textEventCallback", "console.info"),
             "restrict-remote-configuration": kwargs.get("restrictRemoteConfiguration", False),
             "config-from-element": kwargs.get("configFromElement", True),
-            "direct-load": kwargs.get("directLoad", False)
-        }
-    }
-
-    context["partitial"]["specific"] = fixbool(context["partitial"]["specific"])
+            "direct-load": kwargs.get("directLoad", False),
+            "self": selector
+        })
+    }})
     return context
+

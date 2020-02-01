@@ -64,7 +64,6 @@ export default class PartitialAjax {
         }catch(e){
             jsconsole("DEBUG", e);
         }
-
         // Trigger afterSetup event
         self.callEvent("afterSetup", self);
     }
@@ -81,6 +80,14 @@ export default class PartitialAjax {
             }
         });
         return result;
+    }
+
+    delete(){
+        let self = this;
+        const index = partitial_ajax_list.indexOf(self);
+        if (index > -1) {
+            partitial_ajax_list.splice(index, 1);
+        }
     }
 
     /**
@@ -111,10 +118,12 @@ export default class PartitialAjax {
             return response.json();
         }).then(function(data) {
             self.callEvent("onRemoteData");
+
             // If allowed by settings allow remote configuration
             if(!self.options.restrictRemoteConfiguration){
                 self.handleOptions(data);
             }
+
             // Handle Text Informations
             if(data.hasOwnProperty("text")){
                 self.handleTextData(data);
@@ -127,7 +136,6 @@ export default class PartitialAjax {
             self.callEvent("onHandeldRemoteData", {"remoteData": data});
 
         }).catch(function(ex) {
-            throw ex;
             self.callEvent("onResponseError", {"exception": ex});
         });
     }

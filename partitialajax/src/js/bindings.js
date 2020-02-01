@@ -23,7 +23,7 @@ export function extractConfigFromElement(element){
             }
         }
 
-        if(new_val != "" && new_val != null){
+        if(new_val !== "" && new_val != null){
             opt[key] = new_val
         }
 
@@ -47,21 +47,28 @@ export function elementBinding(element){
     }
 
     element_list = Array.from(parent.querySelectorAll(selector_list.join(", ")+", [data-"+ (settings.configs.dataAttributePrefix ? settings.configs.dataAttributePrefix+"-" : "")+"activate=true]"));
+
     element_list.forEach(function(elem){
-        let opt = extractConfigFromElement(elem);
-        opt["element"] = elem;
-
-        if(elem.hasAttribute("data-toggle") && elem.hasAttribute("data-target")){
-            opt["element"] = document.querySelector(elem.getAttribute("data-target"));
-            opt["trigger_element"] = elem;
-            opt["directLoad"] = false;
-            let part = new PartitialAjax(opt);
-
-            elem.addEventListener("click", function(){
-                part.getFromRemote();
-            });
-        }else{
-            new PartitialAjax(opt);
-        }
+        createPartitialFromElement(elem);
     });
+}
+
+export function createPartitialFromElement(element){
+
+    let opt = extractConfigFromElement(element);
+    opt["element"] = element;
+
+    if(element.hasAttribute("data-toggle") && element.hasAttribute("data-target")){
+        opt["element"] = document.querySelector(element.getAttribute("data-target"));
+        opt["trigger_element"] = element;
+        opt["directLoad"] = false;
+
+        let part = new PartitialAjax(opt);
+console.log(element);
+        element.addEventListener("click", function(){
+            part.getFromRemote();
+        });
+    }else{
+        new PartitialAjax(opt);
+    }
 }

@@ -1,3 +1,8 @@
+<{{partitial.current.selector.element}} {% if partitial.current.selector.id %}id="{{ partitial.current.selector.id }}"{% endif %}{% if partitial.current.selector.class_list %} class="{{ partitial.current.selector.class_list|join:" " }}"{% endif %}{% if partitial.current.selector.attribute_list %}{% for attrname, attrvalue in partitial.current.selector.attribute_list.items %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% endif %}{% for key, value in partitial.current.specific.items %} data-{{ partitial.current.prefix }}-{{ key }}="{{ value }}"{% endfor %} data-{{ partitial.current.prefix }}-activate="true">
+    {{ partitial.current.data }}
+</{{partitial.current.selector.element}}>
+
+{% comment %}
 <{{partitial.selector.element}}
     {% if partitial.selector.id %}id="{{ partitial.selector.id }}"{% endif %}
     {% if partitial.selector.class_list %}class="{{ partitial.selector.class_list|join:" " }}"{% endif %}
@@ -7,3 +12,4 @@
 >
     {{ partitial.data }}
 </{{partitial.selector.element}}>
+{% endcomment %}

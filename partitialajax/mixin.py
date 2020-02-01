@@ -56,7 +56,7 @@ class PartitialAjaxMixin:
                 "content": tpl.render(context, request=self.request)
             }
 
-    def get_partitial_context(self, context):
+    def get_partitial_context(self, **kwargs):
         """
             Modifys content for ajax Partitials
             Detailed: It loads all defined files from partitials_list and render this templates
@@ -64,10 +64,13 @@ class PartitialAjaxMixin:
             :param context: context dict
             :return: context dict
         """
-        partitial_ctx = dict()
+        kwargs.update({"partitial":{}})
+
+
         for selector, origin in self.get_partitial_list().items():
-            partitial_ctx[selector] = self.get_partitial(origin, context)
-        return partitial_ctx
+            kwargs["partitial"].update({ selector: self.get_partitial(origin, kwargs)})
+
+        return kwargs
 
     def is_ajax(self):
         if "is-ajax" in self.request.GET:
@@ -89,18 +92,18 @@ class PartitialAjaxMixin:
     def generate_content(self, context):
         content_list = {}
         for key, item in context["partitial"].items():
+            print(item)
             content_list[key] = item["content"]
         return content_list
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        print(ctx)
-        ctx.update(self.get_direct_context_data(ctx))
-        ctx.update({"partitial": self.get_partitial_context(ctx)})
+        ctx.update(self.get_direct_context_data(**ctx))
+        ctx.update(self.get_partitial_context(**ctx))
         return ctx
 
-    def get_direct_context_data(self, ctx):
-        return {}
+    def get_direct_context_data(self, **kwargs):
+        return kwargs
 
     def ajax_get(self, *args, **kwargs):
         ctx = self.get_context_data()
@@ -132,7 +135,7 @@ class CreatePartitialAjaxMixin(PartitialAjaxMixin):
         return super().ajax_get(*args, **kwargs)
 
     def ajax_post(self, *args, **kwargs):
-        super().post(*args, **kwargs)
+        # super().post(*args, **kwargs)
         return JsonResponse({
             "status": "ok"
         })
