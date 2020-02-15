@@ -64,7 +64,7 @@ export function createPartitialFromElement(element){
         opt["directLoad"] = false;
 
         let part = new PartitialAjax(opt);
-console.log(element);
+
         element.addEventListener("click", function(){
             part.getFromRemote();
         });

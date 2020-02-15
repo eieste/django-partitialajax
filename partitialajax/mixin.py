@@ -4,7 +4,8 @@ from django.template.loader import get_template
 from django.template import Template
 from django.views.generic import View
 import requests
-
+from django.db.utils import IntegrityError
+from django.utils.translation import pgettext as __
 
 class PartitialAjaxMixin:
     """
@@ -92,8 +93,8 @@ class PartitialAjaxMixin:
     def generate_content(self, context):
         content_list = {}
         for key, item in context["partitial"].items():
-            print(item)
-            content_list[key] = item["content"]
+            if not key == "current":
+                content_list[key] = item["content"]
         return content_list
 
     def get_context_data(self, **kwargs):
@@ -122,9 +123,37 @@ class DeletePartitialAjaxMixin(PartitialAjaxMixin):
         })
 
     def ajax_post(self, *args, **kwargs):
-        super().post(*args, **kwargs)
+        status = "ok"
+        messages = []
+        try:
+            super().post(*args, **kwargs)
+        except IntegrityError as e:
+            status = "err"
+            messages.append({
+                "title": __("error title", "Integrity Error"),
+                "content": __("error message: integriy error", "this entry cannot be deleted because it is still linked to other entries"),
+                "type": "error",
+                "code": "unknown_error"
+            })
+        except Exception as e:
+            status = "err"
+            messages.append({
+                "title": __("error title", "Unknown Error"),
+                "content": __("error message: unknown error", "A unknown error was raised. {}".format(e)),
+                "type": "error",
+                "code": "unknown_error"
+            })
+        else:
+            messages.append({
+                "title": __("message title", "Entry successfully removed"),
+                "content": __("remove success message", "This entry was successfully removed"),
+                "type": "success",
+                "code": "delete_success"
+            })
+
         return JsonResponse({
-            "status": "ok"
+            "status": status,
+            "text": messages
         })
 
 
@@ -135,9 +164,29 @@ class CreatePartitialAjaxMixin(PartitialAjaxMixin):
         return super().ajax_get(*args, **kwargs)
 
     def ajax_post(self, *args, **kwargs):
-        # super().post(*args, **kwargs)
+        status = "ok"
+        messages = []
+        try:
+            super().post(*args, **kwargs)
+        except Exception as e:
+            status = "err"
+            messages.append({
+                "title": __("error title", "Unknown Error"),
+                "content": __("error message: unknown error", "A unknown error was raised. {}".format(e)),
+                "type": "error",
+                "code": "unknown_error"
+            })
+        else:
+            messages.append({
+                "title": __("message title", "Entry successfully created"),
+                "content": __("remove success message", "This entry was successfully created"),
+                "type": "success",
+                "code": "create_success"
+            })
+
         return JsonResponse({
-            "status": "ok"
+            "status": status,
+            "text": messages
         })
 
 

@@ -126,7 +126,7 @@ export default class PartitialAjax {
 
             // Handle Text Informations
             if(data.hasOwnProperty("text")){
-                self.handleTextData(data);
+                PartitialAjax.handleTextData(self, data);
             }
 
             // Handle Partitial Information
@@ -139,6 +139,8 @@ export default class PartitialAjax {
             self.callEvent("onResponseError", {"exception": ex});
         });
     }
+
+
 
     /**
      * Reconfigure current ParitialAjax object with the remote Option information
@@ -170,15 +172,18 @@ export default class PartitialAjax {
             }else if(self.options.onlyChildReplace) {
                 // if "onlyChildReplace" is activated, make sure that all selectors are a child element of the PartitialAjax element
                 parent_element = self.options.element;
-            }else{
+            }else if(self.options.allowedElements.split(",").indexOf("all") > -1){
                 // Allow to replace each element with the same selector
                 parent_element = document;
             }
 
-            let parts = parent_element.querySelectorAll(selector);
-            parts.forEach(function(key){
-                self._replaceContent(key, content);
-            });
+            if(parent_element){
+                let parts = parent_element.querySelectorAll(selector);
+                parts.forEach(function(key){
+                    self._replaceContent(key, content);
+                });
+
+            }
         });
     }
 
@@ -190,35 +195,41 @@ export default class PartitialAjax {
      */
     _replaceContent(element, content){
         let self = this;
+
         // Check if selector which should be replaced is allowed by allowedElements option
         let allowed_elements_selector_list = document.querySelectorAll(self.options.allowedElements.split(","));
         let allowed_elements_list = [];
+
 
         //If allowedElement Options is set replace only valid elements
         allowed_elements_selector_list.forEach(function(key){
             let element_list = document.querySelectorAll(allowed_elements_selector_list[key]);
             allowed_elements_list = [...allowed_elements_list, ...element_list]
-
         });
 
-        allowed_elements_list.forEach(function(key){
-            let elem = allowed_elements_list[key];
+        if(self.options.allowedElements.split(",").indexOf("self") > -1){
+            allowed_elements_list.push(element);
+        }
+
+        allowed_elements_list.forEach(function(elem, key){
 
             if(elem == element){
                 let result = self.callEvent("onReplaceContent", {"element": element, "content": content});
                 if(result == undefined){
+
                     element.innerHTML = content;
                 }else{
                     result.element.innerHTML = result.content;
                 }
             }
         });
-
         // allow each defined element
+
         if(self.options.allowedElements == "all"){
             let result = self.callEvent("onReplaceContent", {"element": element, "content": content});
-
             if(result == undefined){
+
+
                 element.innerHTML = content;
             }else{
                 result.element.innerHTML = result.content;
@@ -226,16 +237,18 @@ export default class PartitialAjax {
         }
     }
 
-    /**
-     * Trigger textEventCallback method for each transmited text key:value pair
-     * @param data Remote json Response Data
-     */
 
-    handleTextData(data){
+    static handleTextData(partitial, data){
         // Handle Text Only Information
-        Object.keys(data.text).forEach(function(key){
-            let method = eval(self.options.textEventCallback);
-            method(key, data.text[key]);
+        Object.keys(data.text).forEach(function(item){
+            let method = null;
+            if(typeof partitial.options.textEventCallback === "function"){
+                method = partitial.options.textEventCallback;
+            }else{
+                method = eval(partitial.options.textEventCallback);
+            }
+            
+            method(data.text[item]);
             //eval(self.options.textEventCallback+"('"+key+"','"+data.text[key]+"')")
         });
     }
@@ -257,6 +270,7 @@ export default class PartitialAjax {
      */
     callEvent(eventname, data){
         let self = this;
+
         Object.keys(self.event).forEach(function(key){
             if(eventname == key){
                 let method = self.event[key];
